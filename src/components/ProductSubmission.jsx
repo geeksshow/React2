@@ -288,11 +288,9 @@ const ProductSubmission = () => {
       console.log('Submission response data:', data);
 
       if (response.ok) {
-        // Reset form instead of redirecting
-        resetForm();
-        setIsSubmitted(true);
-        // Show success message
         toast.success('✅ Product submitted successfully! Admin will review and approve it soon.');
+        setIsSubmitted(true);
+        // Don't reset form immediately, let user see success message
       } else {
         toast.error(data.message || 'Failed to submit product');
       }
@@ -329,6 +327,9 @@ const ProductSubmission = () => {
                 <div className="mt-2 text-sm text-green-700">
                   <p>Your product has been submitted and is now under admin review.</p>
                   <p className="mt-1">You will be notified once it's approved and published.</p>
+                  <p className="mt-2 text-xs text-green-600">
+                    💡 <strong>Next Steps:</strong> Admin will review your product in the admin panel and either approve or reject it.
+                  </p>
                   <p className="mt-2 text-xs text-green-600">
                     💡 <strong>Tip:</strong> You can check your submitted products in your profile or contact admin for status updates.
                   </p>

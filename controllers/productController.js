@@ -28,20 +28,24 @@ export async function getProducts(req, res) {
 
 // Get pending products for admin review
 export async function getPendingProducts(req, res) {
-    if (!isAdmin(req)) {
-        return res.status(403).json({
-            success: false,
-            message: "Unauthorized - Admin access required"
-        });
-    }
-
     try {
+        console.log('Getting pending products, user role:', req.user?.role);
+        
+        if (!isAdmin(req)) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized - Admin access required"
+            });
+        }
+
         const pendingProducts = await Product.find({ status: 'pending' })
             .populate('submittedBy', 'firstname lastname email')
             .sort({ submittedAt: -1 });
 
+        console.log('Found pending products:', pendingProducts.length);
         res.json(pendingProducts);
     } catch (error) {
+        console.error('Error in getPendingProducts:', error);
         res.status(500).json({
             success: false,
             message: "Error fetching pending products",
@@ -131,17 +135,18 @@ export async function submitProduct(req, res) {
 
 // Admin approve/reject product
 export async function reviewProduct(req, res) {
-    if (!isAdmin(req)) {
-        return res.status(403).json({
-            success: false,
-            message: "Unauthorized - Admin access required"
-        });
-    }
-
     try {
+        if (!isAdmin(req)) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized - Admin access required"
+            });
+        }
+
         const { productId } = req.params;
         const { action, rejectionReason } = req.body;
 
+        console.log('Reviewing product:', productId, 'action:', action);
         if (!['approve', 'reject'].includes(action)) {
             return res.status(400).json({
                 success: false,
@@ -174,12 +179,14 @@ export async function reviewProduct(req, res) {
             });
         }
 
+        console.log('Product updated successfully:', updatedProduct._id, 'new status:', updatedProduct.status);
         res.json({
             success: true,
             message: `Product ${action}d successfully`,
             product: updatedProduct
         });
     } catch (error) {
+        console.error('Error in reviewProduct:', error);
         res.status(500).json({
             success: false,
             message: "Error reviewing product",

@@ -78,13 +78,19 @@ const AdminDashboard = () => {
       }
 
       // Fetch pending products
+      console.log('Fetching pending products...');
       const pendingResponse = await fetch('http://localhost:3001/api/product/pending', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      console.log('Pending response status:', pendingResponse.status);
       if (pendingResponse.ok) {
         const pendingData = await pendingResponse.json();
+        console.log('Pending products data:', pendingData);
         setPendingProducts(pendingData || []);
         setStats(prev => ({ ...prev, pendingProducts: pendingData?.length || 0 }));
+      } else {
+        const errorData = await pendingResponse.json();
+        console.error('Error fetching pending products:', errorData);
       }
 
       // Fetch orders
@@ -475,7 +481,7 @@ const AdminDashboard = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => openEditProduct(product)}
+                      onClick={() => handleProductAction(product._id, 'approve')}
                       className="text-indigo-600 hover:text-indigo-900"
                       title="Edit Product"
                     >
@@ -501,8 +507,15 @@ const AdminDashboard = () => {
   const renderPendingProducts = () => (
     <div className="bg-white rounded-lg shadow-md">
       <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">Pending Product Approvals</h3>
+        <h3 className="text-lg font-medium text-gray-900">
+          Pending Product Approvals ({pendingProducts.length})
+        </h3>
       </div>
+      {pendingProducts.length === 0 ? (
+        <div className="p-6 text-center text-gray-500">
+          <p>No pending products to review</p>
+        </div>
+      ) : (
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -510,6 +523,8 @@ const AdminDashboard = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted By</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -523,12 +538,21 @@ const AdminDashboard = () => {
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900">{product.productname}</div>
-                      <div className="text-sm text-gray-500">${product.price}</div>
+                      <div className="text-sm text-gray-500">{product.subcategory}</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.submittedBy?.email || 'Unknown'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900">
+                    {product.submittedBy?.firstname} {product.submittedBy?.lastname}
+                  </div>
+                  <div className="text-sm text-gray-500">{product.submittedBy?.email}</div>
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.category}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${product.price}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(product.submittedAt).toLocaleDateString()}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
                       onClick={() => handleProductAction(product._id, 'approve')}
@@ -539,7 +563,7 @@ const AdminDashboard = () => {
                       <CheckCircle className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => openRejectModal(product._id)}
+                      onClick={() => handleProductAction(product._id, 'reject')}
                       className="text-red-600 hover:text-red-900"
                       title="Reject Product"
                     >
@@ -552,6 +576,7 @@ const AdminDashboard = () => {
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 

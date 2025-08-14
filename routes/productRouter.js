@@ -29,7 +29,7 @@ productRouter.post("/", authenticateToken, requireRole('admin'), saveProducts);
 productRouter.delete("/:product_id", authenticateToken, requireRole('admin'), deleteProduct);
 productRouter.put("/:product_id", authenticateToken, requireRole('admin'), updateProduct);
 productRouter.put("/update/:product_id", authenticateToken, requireRole('admin'), updateProduct);
-productRouter.get("/pending", authenticateToken, requireRole('admin'), getPendingProducts);
+productRouter.get("/pending", authenticateToken, getPendingProducts);
 productRouter.post("/:productId/review", authenticateToken, requireRole('admin'), reviewProduct);
 
 export default productRouter; 
