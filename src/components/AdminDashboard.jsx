@@ -131,7 +131,7 @@ const AdminDashboard = () => {
   const handleProductAction = async (productId, action) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/product/${selectedProduct._id}/review`, {
+      const response = await fetch(`http://localhost:3001/api/product/${productId}/review`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -531,7 +531,7 @@ const AdminDashboard = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.category}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button
+                      onClick={() => handleProductAction(product._id, 'approve')}
                       onClick={() => handleProductAction(product._id, 'approve')}
                       className="text-green-600 hover:text-green-900"
                       title="Approve Product"
@@ -539,7 +539,7 @@ const AdminDashboard = () => {
                       <CheckCircle className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleProductAction(product._id, 'reject')}
+                      onClick={() => openRejectModal(product._id)}
                       className="text-red-600 hover:text-red-900"
                       title="Reject Product"
                     >
