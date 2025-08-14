@@ -131,7 +131,7 @@ const AdminDashboard = () => {
   const handleProductAction = async (productId, action) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/product/${productId}/review`, {
+      const response = await fetch(`http://localhost:3001/api/product/${selectedProduct._id}/review`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -720,8 +720,7 @@ const AdminDashboard = () => {
                   <option value="Fertilizers">Fertilizers</option>
                   <option value="Pesticides">Pesticides</option>
                   <option value="Tools">Tools</option>
-                    setSelectedProduct(selectedProduct);
-                    setShowRejectModal(true);
+                  <option value="Machinery">Machinery</option>
                   <option value="Organic Products">Organic Products</option>
                 </select>
               </div>

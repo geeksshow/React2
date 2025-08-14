@@ -139,7 +139,7 @@ export async function reviewProduct(req, res) {
     }
 
     try {
-        const { product_id } = req.params;
+        const { productId } = req.params;
         const { action, rejectionReason } = req.body;
 
         if (!['approve', 'reject'].includes(action)) {
@@ -161,8 +161,8 @@ export async function reviewProduct(req, res) {
             updateData.rejectionReason = rejectionReason;
         }
 
-        const updatedProduct = await Product.findOneAndUpdate(
-            { product_id },
+        const updatedProduct = await Product.findByIdAndUpdate(
+            productId,
             updateData,
             { new: true }
         ).populate('submittedBy', 'firstname lastname email');
