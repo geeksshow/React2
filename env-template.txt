@@ -1,0 +1,13 @@
+# Copy this file to .env and fill in your values
+
+# MongoDB Connection String
+MONGO_URL=mongodb://localhost:27017/raw_agro_db
+
+# JWT Secret Key (generate a strong random string)
+JWT_SECRET_KEY=your_super_secret_jwt_key_here_make_it_long_and_random
+
+# Node Environment
+NODE_ENV=development
+
+# Server Port (optional, defaults to 3001)
+PORT=3001
