@@ -97,8 +97,8 @@ const AdminDashboard = () => {
 
       // Fetch orders
       const ordersResponse = await fetch('http://localhost:3001/api/order/all', {
-        headers: { 'Authorization': `Bearer ${token}` }
         method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       if (ordersResponse.ok) {
         const ordersData = await ordersResponse.json();
