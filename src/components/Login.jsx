@@ -10,6 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -45,9 +46,12 @@ const Login = () => {
         setEmail('');
         setPassword('');
         
-        // Redirect to home page or dashboard
-        // navigate('/');
-        window.location.href = '/';
+        // Redirect based on user role
+        if (data.user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
       } else {
         toast.error(data.message || 'Invalid email or password');
       }
