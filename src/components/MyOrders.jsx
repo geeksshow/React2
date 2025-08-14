@@ -11,8 +11,7 @@ const MyOrders = () => {
   const [showOrderModal, setShowOrderModal] = useState(false);
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
+    if (!isAuthenticated()) {
       redirectToLogin();
       return;
     }

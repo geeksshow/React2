@@ -17,7 +17,7 @@ const AdminRoute = ({ children }) => {
       const token = localStorage.getItem('token');
       const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-      if (!token || !user.email) {
+      if (!token || !user || !user.email) {
         navigate('/admin-login');
         return;
       }
@@ -45,6 +45,8 @@ const AdminRoute = ({ children }) => {
       }
     } catch (error) {
       console.error('Auth check error:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       navigate('/admin-login');
     } finally {
       setIsLoading(false);

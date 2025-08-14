@@ -216,8 +216,7 @@ const ProductSubmission = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
+    if (!isAuthenticated()) {
       toast.error('Please login to submit products');
       redirectToLogin();
       return;

@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import Products from './pages/Products';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import AdminPage from './pages/adminpage';
+import AdminPage from './pages/AdminPage';
 import NotFound from './components/NotFound';
 import UserProfile from './components/UserProfile';
 import Cart from './components/Cart';
@@ -23,7 +23,7 @@ function App() {
       <div>
         <Toaster position="top-center" />
 
-        <Routes path="/*">
+        <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/products" element={<Products />} />
@@ -42,7 +42,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/orders" element={<MyOrders />} />
 
-          <Route path="/*" element={<NotFound />}/>
+          <Route path="*" element={<NotFound />}/>
         </Routes>
       </div>
     </BrowserRouter>

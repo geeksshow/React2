@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User, Leaf } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ForgotPassword from './ForgotPassword';
@@ -163,7 +163,7 @@ const Login = () => {
           </form>
 
           {/* Footer */}
-          <div className="text-center">
+          <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
               <Link to="/signup" className="font-medium text-green-600 hover:text-green-500">

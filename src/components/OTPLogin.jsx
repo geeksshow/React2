@@ -115,9 +115,32 @@ const OTPLogin = () => {
 
       if (response.ok) {
         toast.success('OTP verified successfully!');
-        // Here you would typically proceed with login
-        // For now, redirect to products page
-        navigate('/products');
+        
+        // After OTP verification, we need to actually log the user in
+        // This is a simplified approach - in production you'd get a token from the server
+        try {
+          const loginResponse = await fetch('http://localhost:3001/api/user/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password: 'otp-verified' }) // This would need backend support
+          });
+          
+          if (loginResponse.ok) {
+            const loginData = await loginResponse.json();
+            localStorage.setItem('token', loginData.token);
+            localStorage.setItem('user', JSON.stringify(loginData.user));
+            navigate('/');
+          } else {
+            // For now, just redirect to login
+            toast.success('Please complete login with your password');
+            navigate('/login');
+          }
+        } catch (error) {
+          console.error('Login after OTP error:', error);
+          navigate('/login');
+        }
       } else {
         toast.error(data.message || 'Invalid OTP');
       }

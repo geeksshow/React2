@@ -25,7 +25,7 @@ const UserProfile = () => {
   useEffect(() => {
     const currentUser = getCurrentUser();
     
-    if (!currentUser) {
+    if (!isAuthenticated() || !currentUser) {
       toast.error('Please login to view your profile');
       redirectToLogin();
       return;

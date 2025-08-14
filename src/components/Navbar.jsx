@@ -24,13 +24,25 @@ const Navbar = () => {
       }
     };
 
+    // Listen for auth changes
+    const handleAuthChange = () => {
+      checkAuthStatus();
+    };
+
     window.addEventListener('cartUpdated', handleCartUpdate);
-    return () => window.removeEventListener('cartUpdated', handleCartUpdate);
+    window.addEventListener('storage', handleAuthChange);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+      window.removeEventListener('storage', handleAuthChange);
+    };
   }, [isLoggedIn]);
 
   const checkAuthStatus = () => {
+    const authenticated = isAuthenticated();
     const currentUser = getCurrentUser();
-    if (currentUser) {
+    
+    if (authenticated && currentUser) {
       setUser(currentUser);
       setIsLoggedIn(true);
     } else {
@@ -67,17 +79,7 @@ const Navbar = () => {
     setIsLoggedIn(false);
     setCartCount(0);
     setIsUserMenuOpen(false);
-    navigate('/');
   };
-
-  const handleStorageChange = () => {
-    checkAuthStatus();
-  };
-
-  useEffect(() => {
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">

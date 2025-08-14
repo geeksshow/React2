@@ -25,8 +25,7 @@ const Cart = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
+    if (!isAuthenticated()) {
       redirectToLogin();
       return;
     }

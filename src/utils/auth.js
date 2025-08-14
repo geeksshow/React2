@@ -3,7 +3,8 @@
 // Check if user is logged in
 export const isAuthenticated = () => {
   const token = localStorage.getItem('token');
-  return !!token;
+  const user = localStorage.getItem('user');
+  return !!(token && user);
 };
 
 // Get current user data
@@ -14,14 +15,23 @@ export const getCurrentUser = () => {
       return JSON.parse(userStr);
     } catch (error) {
       console.error('Error parsing user data:', error);
+      // Clear corrupted data
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
       return null;
     }
   }
   return null;
 };
 
-// Get user ID from JWT token
+// Get user ID from stored user data or JWT token
 export const getUserId = () => {
+  const user = getCurrentUser();
+  if (user && user.userId) {
+    return user.userId;
+  }
+  
+  // Fallback: try to get from JWT token
   const token = getAuthToken();
   if (token) {
     try {
@@ -50,8 +60,10 @@ export const isAdmin = () => {
 // Logout user
 export const logout = () => {
   localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = '/login';
+  localStorage.removeUser('user');
+  // Trigger storage event for other components
+  window.dispatchEvent(new Event('storage'));
+  window.location.href = '/';
 };
 
 // Set auth headers for API calls
@@ -98,4 +110,36 @@ export const redirectToHome = () => {
 // Redirect to login page
 export const redirectToLogin = () => {
   window.location.href = '/login';
+};
+
+// Check if token is expired
+export const isTokenExpired = () => {
+  const token = getAuthToken();
+  if (!token) return true;
+  
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Date.now() / 1000;
+    return payload.exp < currentTime;
+  } catch (error) {
+    console.error('Error checking token expiration:', error);
+    return true;
+  }
+};
+
+// Validate authentication and refresh if needed
+export const validateAuth = async () => {
+  const token = getAuthToken();
+  const user = getCurrentUser();
+  
+  if (!token || !user) {
+    return false;
+  }
+  
+  if (isTokenExpired()) {
+    logout();
+    return false;
+  }
+  
+  return true;
 };
