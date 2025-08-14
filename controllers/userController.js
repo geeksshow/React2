@@ -318,6 +318,12 @@ export function toggleUserBlock(req, res) {
         const { userId } = req.params;
         const { isBlocked } = req.body;
 
+        // Prevent admin from blocking themselves
+        if (userId === req.user._id.toString()) {
+            return res.status(400).json({
+                message: "You cannot block yourself"
+            });
+        }
         User.findByIdAndUpdate(
             userId,
             { isBlocked: isBlocked },
@@ -361,6 +367,12 @@ export function changeUserRole(req, res) {
             });
         }
 
+        // Prevent admin from demoting themselves
+        if (userId === req.user._id.toString() && role === 'customer') {
+            return res.status(400).json({
+                message: "You cannot demote yourself"
+            });
+        }
         User.findByIdAndUpdate(
             userId,
             { role: role },

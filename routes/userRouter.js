@@ -43,7 +43,6 @@ userRouter.post("/logout", authenticateToken, logout);
 userRouter.get("/all", authenticateToken, isAdmin, getAllUsers);
 userRouter.put("/:userId/block", authenticateToken, isAdmin, validateUserBlock, handleValidationErrors, toggleUserBlock);
 userRouter.put("/:userId/unblock", authenticateToken, isAdmin, validateUserBlock, handleValidationErrors, toggleUserBlock);
-userRouter.put("/:userId/promote", authenticateToken, isAdmin, validateUserRole, handleValidationErrors, changeUserRole);
 userRouter.put("/:userId/role", authenticateToken, isAdmin, validateUserRole, handleValidationErrors, changeUserRole);
 
 // User account management (user can delete their own account, admin can delete any)

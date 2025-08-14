@@ -720,7 +720,8 @@ const AdminDashboard = () => {
                   <option value="Fertilizers">Fertilizers</option>
                   <option value="Pesticides">Pesticides</option>
                   <option value="Tools">Tools</option>
-                  <option value="Machinery">Machinery</option>
+                    setSelectedProduct(selectedProduct);
+                    setShowRejectModal(true);
                   <option value="Organic Products">Organic Products</option>
                 </select>
               </div>
