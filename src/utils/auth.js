@@ -60,7 +60,7 @@ export const isAdmin = () => {
 // Logout user
 export const logout = () => {
   localStorage.removeItem('token');
-  localStorage.removeUser('user');
+  localStorage.removeItem('user');
   // Trigger storage event for other components
   window.dispatchEvent(new Event('storage'));
   window.location.href = '/';

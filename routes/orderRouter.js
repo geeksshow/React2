@@ -31,7 +31,7 @@ orderRouter.put("/:orderId/cancel", cancelOrder);
 orderRouter.get("/:orderId/status", getOrderStatus);
 
 // Admin routes
-orderRouter.get("/all", requireRole('admin'), getAllOrders);
-orderRouter.put("/update-status/:orderId", requireRole('admin'), updateOrderStatus);
+orderRouter.get("/all", requireRole(['admin']), getAllOrders);
+orderRouter.put("/update-status/:orderId", requireRole(['admin']), updateOrderStatus);
 
 export default orderRouter;

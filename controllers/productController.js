@@ -57,6 +57,8 @@ export async function getPendingProducts(req, res) {
 // Submit a new product (for logged-in users)
 export async function submitProduct(req, res) {
     try {
+        console.log('=== PRODUCT SUBMISSION BACKEND ===');
+        console.log('Request received from user:', req.user?.email);
         console.log('Product submission request received:', {
             body: req.body,
             user: req.user,
@@ -65,6 +67,7 @@ export async function submitProduct(req, res) {
 
         const { productname, altName, description, images, labelledPrice, price, stock, category, subcategory, ingredients, allergens, calories, protein, carbs, fat, fiber, organicCertification } = req.body;
         
+        console.log('Extracted fields:', { productname, category, subcategory, price, stock });
         // Validate required fields
         if (!productname || !description || !category || !subcategory || !labelledPrice || !price || !stock) {
             return res.status(400).json({
@@ -81,6 +84,7 @@ export async function submitProduct(req, res) {
             });
         }
 
+        console.log('User validation passed. User ID:', req.user._id);
         // Generate unique product ID
         const productId = 'P' + Date.now() + Math.random().toString(36).substr(2, 5);
         
@@ -109,6 +113,7 @@ export async function submitProduct(req, res) {
             isAvailable: false // Not available until approved
         });
 
+        console.log('Product object created:', newProduct.product_id);
         console.log('Attempting to save product:', newProduct);
 
         await newProduct.save();
@@ -117,6 +122,7 @@ export async function submitProduct(req, res) {
         console.log('Product status:', newProduct.status);
         console.log('Product submittedAt:', newProduct.submittedAt);
         console.log('Product submittedBy:', newProduct.submittedBy);
+        console.log('✅ Product saved to database successfully');
 
         res.status(201).json({
             success: true,
@@ -124,6 +130,7 @@ export async function submitProduct(req, res) {
             productId: newProduct.product_id
         });
     } catch (error) {
+        console.error('❌ Product submission error:', error);
         console.error('Product submission error:', error);
         res.status(500).json({
             success: false,

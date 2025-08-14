@@ -80,6 +80,7 @@ const AdminDashboard = () => {
       // Fetch pending products
       console.log('Fetching pending products...');
       const pendingResponse = await fetch('http://localhost:3001/api/product/pending', {
+        method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       console.log('Pending response status:', pendingResponse.status);
@@ -89,6 +90,7 @@ const AdminDashboard = () => {
         setPendingProducts(pendingData || []);
         setStats(prev => ({ ...prev, pendingProducts: pendingData?.length || 0 }));
       } else {
+        console.error('Failed to fetch pending products. Status:', pendingResponse.status);
         const errorData = await pendingResponse.json();
         console.error('Error fetching pending products:', errorData);
       }
@@ -96,6 +98,7 @@ const AdminDashboard = () => {
       // Fetch orders
       const ordersResponse = await fetch('http://localhost:3001/api/order/all', {
         headers: { 'Authorization': `Bearer ${token}` }
+        method: 'GET',
       });
       if (ordersResponse.ok) {
         const ordersData = await ordersResponse.json();
@@ -104,6 +107,7 @@ const AdminDashboard = () => {
       }
 
     } catch (error) {
+      console.error('Dashboard data fetch error:', error);
       console.error('Error fetching dashboard data:', error);
       toast.error('Failed to load dashboard data');
     } finally {
@@ -118,6 +122,7 @@ const AdminDashboard = () => {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ 
+          'Content-Type': 'application/json',
           [action === 'block' ? 'isBlocked' : 'role']: action === 'block' ? true : 'admin'
         })
       });
@@ -137,6 +142,7 @@ const AdminDashboard = () => {
   const handleProductAction = async (productId, action) => {
     try {
       const token = localStorage.getItem('token');
+      console.log('Reviewing product:', productId, 'Action:', action);
       const response = await fetch(`http://localhost:3001/api/product/${productId}/review`, {
         method: 'POST',
         headers: { 
@@ -147,6 +153,7 @@ const AdminDashboard = () => {
       });
 
       if (response.ok) {
+        console.log('Product action successful');
         toast.success(`Product ${action}ed successfully`);
         fetchDashboardData();
       } else {
@@ -154,6 +161,7 @@ const AdminDashboard = () => {
         toast.error(error.message || `Failed to ${action} product`);
       }
     } catch (error) {
+      console.error('Product action error:', error);
       console.error(`Error ${action}ing product:`, error);
       toast.error(`Failed to ${action} product`);
     }
@@ -481,6 +489,7 @@ const AdminDashboard = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
                     <button
+                      onClick={() => handleProductAction(product._id, 'approve')}
                       onClick={() => handleProductAction(product._id, 'approve')}
                       className="text-indigo-600 hover:text-indigo-900"
                       title="Edit Product"

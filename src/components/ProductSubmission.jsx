@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Upload, Plus, X, Save, AlertCircle } from 'lucide-react';
-import { getCurrentUser, getAuthHeaders, redirectToLogin } from '../utils/auth.js';
+import { isAuthenticated, getCurrentUser, getAuthHeaders, redirectToLogin } from '../utils/auth.js';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ const ProductSubmission = () => {
   const [allergens, setAllergens] = useState(['']);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const [submitAttempts, setSubmitAttempts] = useState(0);
 
   const [formData, setFormData] = useState({
     productname: '',
@@ -216,6 +217,11 @@ const ProductSubmission = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Debug logging
+    console.log('=== PRODUCT SUBMISSION DEBUG ===');
+    console.log('Submit attempt:', submitAttempts + 1);
+    setSubmitAttempts(prev => prev + 1);
+    
     if (!isAuthenticated()) {
       toast.error('Please login to submit products');
       redirectToLogin();
@@ -223,7 +229,10 @@ const ProductSubmission = () => {
     }
 
     // Validation
-    if (!formData.productname || !formData.description || !formData.category || !formData.subcategory || !formData.labelledPrice || !formData.price || !formData.stock) {
+    const requiredFields = ['productname', 'description', 'category', 'subcategory', 'labelledPrice', 'price', 'stock'];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    
+    if (missingFields.length > 0) {
       toast.error('Please fill in all required fields: Product Name, Description, Category, Subcategory, Labelled Price, Price, and Stock');
       return;
     }
@@ -254,6 +263,9 @@ const ProductSubmission = () => {
     try {
       // Upload images
       const imageUrls = await uploadImagesToServer(selectedImages);
+      
+      console.log('Images uploaded:', imageUrls.length);
+      console.log('Current user:', getCurrentUser());
 
       // Prepare submission data
       const submissionData = {
@@ -272,6 +284,8 @@ const ProductSubmission = () => {
         fiber: formData.fiber ? parseFloat(formData.fiber) : undefined
       };
 
+      console.log('Submission data prepared:', submissionData);
+      
       console.log('Submitting product data:', submissionData);
       console.log('Auth headers:', getAuthHeaders());
 
@@ -281,6 +295,7 @@ const ProductSubmission = () => {
         body: JSON.stringify(submissionData)
       });
 
+      console.log('Response received. Status:', response.status);
       console.log('Submission response status:', response.status);
       console.log('Submission response headers:', response.headers);
 
@@ -288,6 +303,7 @@ const ProductSubmission = () => {
       console.log('Submission response data:', data);
 
       if (response.ok) {
+        console.log('✅ Submission successful!');
         toast.success('✅ Product submitted successfully! Admin will review and approve it soon.');
         setIsSubmitted(true);
         // Don't reset form immediately, let user see success message
@@ -295,6 +311,7 @@ const ProductSubmission = () => {
         toast.error(data.message || 'Failed to submit product');
       }
     } catch (error) {
+      console.error('❌ Submission failed with error:', error);
       console.error('Submission error:', error);
       toast.error('Network error. Please try again.');
     } finally {
